@@ -5,7 +5,7 @@ body {
 }
 
 option {
-  color: black;
+  color: rgb(255, 255, 255);
 }
 
 * {
@@ -19,7 +19,7 @@ option {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #282727;
+  background: #ffc002;
   border-radius: 20px;
 }
 
@@ -44,7 +44,7 @@ option {
 }
 
 .table-container thead {
-  border-bottom: 1px solid black;
+  border-bottom: 1px solid #ffc002;
   box-shadow: -2px 0px 4px -2px #5c5d5efa;
   position: sticky;
   top: 0;

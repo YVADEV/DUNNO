@@ -5,9 +5,9 @@ import Spinner from 'components/spinner/Spinner'
 import { GiClick } from "react-icons/gi";
 
 const MultiLeadModel = (props) => {
-    const { onClose, isOpen, fieldName, setFieldValue,data } = props
+    const { onClose, isOpen, fieldName, setFieldValue, data } = props;
     const [selectedValues, setSelectedValues] = useState([]);
-    const [isLoding, setIsLoding] = useState(false)
+    const [isLoading, setIsLoading] = useState(false); // Corrected typo
 
     const columns = [
         { Header: "#", accessor: "_id", isSortable: false, width: 10 },
@@ -20,23 +20,21 @@ const MultiLeadModel = (props) => {
         { Header: "Lead Score", accessor: "leadScore", },
     ];
 
-    const user = JSON.parse(localStorage.getItem("user"))
-   
+    const user = JSON.parse(localStorage.getItem("user"));
+
     const uniqueValues = [...new Set(selectedValues)];
 
     const handleSubmit = async () => {
         try {
-            setIsLoding(true)
-            setFieldValue(fieldName, uniqueValues)
-            onClose()
+            setIsLoading(true); // Corrected typo
+            setFieldValue(fieldName, uniqueValues);
+            onClose();
+        } catch (e) {
+            console.log(e);
+        } finally {
+            setIsLoading(false); // Corrected typo
         }
-        catch (e) {
-            console.log(e)
-        }
-        finally {
-            setIsLoding(false)
-        }
-    }
+    };
 
     return (
         <Modal onClose={onClose} size='full' isOpen={isOpen} >
@@ -45,19 +43,33 @@ const MultiLeadModel = (props) => {
                 <ModalHeader>Select Lead</ModalHeader>
                 <ModalCloseButton />
                 <ModalBody>
-                    {isLoding ?
+                    {isLoading ? // Corrected typo
                         <Flex justifyContent={'center'} alignItems={'center'} width="100%" >
                             <Spinner />
-                        </Flex> : <LeadTable tableData={data} type='multi' selectedValues={selectedValues} setSelectedValues={setSelectedValues} columnsData={columns} title="Lead" />}
+                        </Flex> : 
+                        <LeadTable 
+                            tableData={data} 
+                            type='multi' 
+                            selectedValues={selectedValues} 
+                            setSelectedValues={setSelectedValues} 
+                            columnsData={columns} 
+                            title="Lead" 
+                        />
+                    }
                 </ModalBody>
                 <ModalFooter>
-                    <Button variant='brand' onClick={handleSubmit} disabled={isLoding ? true : false} leftIcon={<GiClick />}> {isLoding ? <Spinner /> : 'Select'}</Button>
+                    <Button 
+                        variant='brand' 
+                        onClick={handleSubmit} 
+                        disabled={isLoading} // Corrected typo
+                        leftIcon={<GiClick />}> 
+                        {isLoading ? <Spinner /> : 'Select'}
+                    </Button>
                     <Button onClick={() => onClose()}>Close</Button>
                 </ModalFooter>
             </ModalContent>
         </Modal>
+    );
+};
 
-    )
-}
-
-export default MultiLeadModel
+export default MultiLeadModel;
