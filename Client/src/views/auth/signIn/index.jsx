@@ -246,22 +246,24 @@ function SignIn() {
               </Flex>
 
               <Flex
-                justifyContent="space-between"
-                align="center"
-                mb="24px"
+              justifyContent="space-between"
+              align="center"
+              mb="24px"
               ></Flex>
               <Button
-                fontSize="sm"
-                variant="brand"
-                fontWeight="500"
-                w="100%"
-                h="50"
-                type="submit"
-                mb="24px"
-                disabled={isLoding ? true : false}
-              >
-                {isLoding ? <Spinner /> : "Sign In"}
-              </Button>
+              fontSize="sm"
+              bg="gold" // Set the button background to gold
+              color="black" // Set the text color to black
+              fontWeight="500"
+   w="100%"
+  h="50"
+  type="submit"
+  mb="24px"
+  disabled={isLoding ? true : false}
+  _hover={{ bg: "yellow.500" }} // Optional: change the hover color
+>
+  {isLoding ? <Spinner /> : "Sign In"}
+</Button>
             </FormControl>
           </form>
         </Flex>

@@ -14,7 +14,7 @@ import AdvanceSearchUsingCustomFields from "../search/advanceSearch";
 import DataNotFound from "../notFoundData";
 import moment from 'moment';
 import { useSelector, useDispatch } from 'react-redux';
-import { getSearchData, setGetTagValues, setSearchValue } from '../../redux/slices/advanceSearchSlice'
+import { getSearchData, setGetTagValues, setSearchValue } from '../../redux/slices/advanceSearchSlice';
 import { commonUtils } from 'utils/utils';
 
 const CommonCheckTable = (props) => {
@@ -23,7 +23,6 @@ const CommonCheckTable = (props) => {
         title,
         columnData,
         size,
-        // dataColumn,
         setSearchedDataOut,
         state,
         allData,
@@ -31,8 +30,6 @@ const CommonCheckTable = (props) => {
         deleteMany,
         tableCustomFields,
         access,
-        // selectedColumns,
-        // setSelectedColumns,
         onOpen,
         setDelete,
         selectedValues,
@@ -49,6 +46,7 @@ const CommonCheckTable = (props) => {
         selectType,
         customSearch,
     } = props;
+
     const { dataLength } = props;
     const { handleSearchType } = props;
 
@@ -57,27 +55,35 @@ const CommonCheckTable = (props) => {
 
     const [displaySearchData, setDisplaySearchData] = useState(false);
     const [searchedData, setSearchedData] = useState([]);
+    const [tempSelectedColumns, setTempSelectedColumns] = useState([]);
 
-    const [columns, setColumns] = useState(columnData || []);
-    const [tempSelectedColumns, setTempSelectedColumns] = useState(columns || []);
-
-    const searchedDataOut = useSelector((state) => state?.advanceSearchData?.searchResult)
-    const searchValue = useSelector((state) => state?.advanceSearchData?.searchValue)
-    const getTagValues = useSelector((state) => state?.advanceSearchData?.getTagValues)
+    const searchedDataOut = useSelector((state) => state?.advanceSearchData?.searchResult);
+    const searchValue = useSelector((state) => state?.advanceSearchData?.searchValue);
+    const getTagValues = useSelector((state) => state?.advanceSearchData?.getTagValues);
     const data = useMemo(() => (AdvanceSearch ? searchDisplay : displaySearchData) ? (AdvanceSearch ? searchedDataOut : searchedData) : allData, [searchDisplay, displaySearchData, AdvanceSearch, searchedDataOut, searchedData, allData]);
 
     const [manageColumnsModel, setManageColumnsModel] = useState(false);
     const [csvColumns, setCsvColumns] = useState([]);
     const [searchbox, setSearchbox] = useState('');
     const [advaceSearch, setAdvaceSearch] = useState(false);
-    // const [column, setColumn] = useState('');
     const [gopageValue, setGopageValue] = useState();
 
     const dispatch = useDispatch();
 
+    // Process columnData to ensure each column has a valid accessor
+    useEffect(() => {
+        if (columnData) {
+            const processedColumns = columnData.map((column, index) => ({
+                ...column,
+                accessor: column.accessor || (column.Header ? column.Header.toLowerCase().replace(/\s+/g, '_') : `column_${index}`),
+            }));
+            setTempSelectedColumns(processedColumns);
+        }
+    }, [columnData]);
+
     const tableInstance = useTable(
         {
-            columns,
+            columns: tempSelectedColumns,
             data,
             initialState: { pageIndex: 0 }
         },
@@ -104,16 +110,16 @@ const CommonCheckTable = (props) => {
     } = tableInstance;
 
     if (pageOptions && pageOptions?.length > 0 && pageOptions?.length < gopageValue) {
-        setGopageValue(pageOptions.length)
+        setGopageValue(pageOptions.length);
     }
 
     const handleSearch = (results) => {
-        AdvanceSearch && dispatch(getSearchData({ searchData: (results || []), type: handleSearchType }))
+        AdvanceSearch && dispatch(getSearchData({ searchData: (results || []), type: handleSearchType }));
         AdvanceSearch ? setSearchedDataOut(results || []) : setSearchedData(results || []);
     };
 
     const handleAdvanceSearch = (values) => {
-        dispatch(setSearchValue(values))
+        dispatch(setSearchValue(values));
         const searchResult = AdvanceSearch ? dispatch(getSearchData({ values: values, allData: allData, type: title })) : allData?.filter(item => {
             return tableCustomFields.every(field => {
                 const fieldValue = values[field.name];
@@ -161,36 +167,35 @@ const CommonCheckTable = (props) => {
                     result.push({
                         name: [`from${field.name}`, `to${field.name}`],
                         value: `From: ${fromDate} To: ${toDate}`
-                    })
+                    });
                 }
             } else if (values[field.name]) {
                 result.push({
                     name: [field.name],
                     value: values[field.name]
-                })
+                });
             }
 
             return result;
         }, []);
-        dispatch(setGetTagValues(getValue))
+        dispatch(setGetTagValues(getValue));
         setSearchedData(searchResult);
         setDisplaySearchData(true);
         setAdvaceSearch(false);
         if (setSearchbox) {
             setSearchbox('');
         }
-    }
-
+    };
 
     const handleClear = () => {
-        setSearchDisplay && setSearchDisplay(false)
-        setDisplaySearchData && setDisplaySearchData(false)
+        setSearchDisplay && setSearchDisplay(false);
+        setDisplaySearchData && setDisplaySearchData(false);
         if (searchboxOutside) {
-            setSearchboxOutside('')
+            setSearchboxOutside('');
         } else {
             setSearchbox('');
         }
-        dispatch(setGetTagValues([]))
+        dispatch(setGetTagValues([]));
         if (props?.getTagValuesOutSide) {
             setGetTagValuesOutside([]);
         }
@@ -205,18 +210,18 @@ const CommonCheckTable = (props) => {
         const searchResult = allData?.filter(
             (item) =>
                 (!state || (item?.status && item?.status?.toLowerCase().includes(state?.toLowerCase())))
-        )
+        );
         let getValue = [state || undefined].filter(value => value);
 
-        dispatch(setGetTagValues(getValue))
+        dispatch(setGetTagValues(getValue));
         AdvanceSearch ? setSearchedDataOut && setSearchedDataOut(searchResult) : setSearchedData && setSearchedData(searchResult);
         AdvanceSearch ? setSearchDisplay && setSearchDisplay(true) : setDisplaySearchData && setDisplaySearchData(searchResult);
-        setDisplaySearchData(true)
-        setAdvaceSearch(false)
-    }
+        setDisplaySearchData(true);
+        setAdvaceSearch(false);
+    };
 
     useEffect(() => {
-        state && findStatus()
+        state && findStatus();
     }, [state, allData]);
 
     const toggleColumnVisibility = (columnKey) => {
@@ -231,7 +236,6 @@ const CommonCheckTable = (props) => {
 
         const orderedColumns = columnData?.filter(column => updatedColumns.some(updatedColumn => updatedColumn?.accessor === column?.accessor));
         setTempSelectedColumns(orderedColumns);
-
     };
 
     const handleCheckboxChange = (event, value) => {
@@ -248,13 +252,11 @@ const CommonCheckTable = (props) => {
                 prevSelectedValues.filter((selectedValue) => selectedValue !== value)
             );
         }
-
     };
 
     const handleColumnClose = () => {
-        setManageColumnsModel(!manageColumnsModel)
+        setManageColumnsModel(!manageColumnsModel);
     };
-
 
     const handleExportLeads = (extension) => {
         selectedValues && selectedValues?.length > 0
@@ -293,7 +295,7 @@ const CommonCheckTable = (props) => {
                     extension: extension
                 });
             }
-            setSelectedValues([])
+            setSelectedValues([]);
         } catch (e) {
             console.error(e);
         }
@@ -318,28 +320,24 @@ const CommonCheckTable = (props) => {
             }
         }
 
-        handleAdvanceSearch(updatedSearchValue)
+        handleAdvanceSearch(updatedSearchValue);
 
-        dispatch(setGetTagValues(filter))
+        dispatch(setGetTagValues(filter));
         if (filter?.length === 0) {
             handleClear();
         }
-    }
+    };
 
     useEffect(() => {
         AdvanceSearch ? setSearchedDataOut && setSearchedDataOut(data) : setSearchedData && setSearchedData(data);
-    }, []);
+    }, [data]);
 
     useEffect(() => {
-        setColumns(columnData);
-    }, [columnData]);
-
-    useEffect(() => {
-        if (columns) {
-            let tempCsvColumns = columns?.filter((col) => col?.Header !== '#' && col?.Header !== 'Action')?.map((field) => ({ Header: field?.Header, accessor: field?.accessor }));
-            setCsvColumns([...tempCsvColumns])
+        if (tempSelectedColumns) {
+            let tempCsvColumns = tempSelectedColumns?.filter((col) => col?.Header !== '#' && col?.Header !== 'Action')?.map((field) => ({ Header: field?.Header, accessor: field?.accessor }));
+            setCsvColumns([...tempCsvColumns]);
         }
-    }, [columns]);
+    }, [tempSelectedColumns]);
 
     return (
         <>
@@ -363,7 +361,7 @@ const CommonCheckTable = (props) => {
                                     {title} (<CountUpComponent key={data?.length} targetNumber={dataLength || data?.length} />)
                                 </Text>
                             }
-                            {customSearch !== false && <CustomSearchInput setSearchbox={setSearchboxOutside ? setSearchboxOutside : setSearchbox} setDisplaySearchData={setSearchboxOutside ? props.setSearchDisplay : setDisplaySearchData} searchbox={searchboxOutside ? searchboxOutside : searchbox} allData={allData} dataColumn={columns} onSearch={handleSearch} setGetTagValues={props.setGetTagValuesOutside ? props.setGetTagValuesOutside : setGetTagValues} setGopageValue={setGopageValue} />}
+                            {customSearch !== false && <CustomSearchInput setSearchbox={setSearchboxOutside ? setSearchboxOutside : setSearchbox} setDisplaySearchData={setSearchboxOutside ? props.setSearchDisplay : setDisplaySearchData} searchbox={searchboxOutside ? searchboxOutside : searchbox} allData={allData} dataColumn={tempSelectedColumns} onSearch={handleSearch} setGetTagValues={props.setGetTagValuesOutside ? props.setGetTagValuesOutside : setGetTagValues} setGopageValue={setGopageValue} />}
                             {
                                 AdvanceSearch ? AdvanceSearch : AdvanceSearch !== false &&
                                     <Button variant="outline" colorScheme='brand' leftIcon={<SearchIcon />} mt={{ sm: "5px", md: "0" }} size="sm" onClick={() => setAdvaceSearch(true)}>Advance Search</Button>
@@ -460,7 +458,7 @@ const CommonCheckTable = (props) => {
                         <Tbody {...getTableBodyProps()}>
                             {isLoding ?
                                 <Tr>
-                                    <Td colSpan={columns?.length}>
+                                    <Td colSpan={tempSelectedColumns?.length}>
                                         <Flex justifyContent={'center'} alignItems={'center'} width="100%" color={textColor} fontSize="sm" fontWeight="700">
                                             <Spinner />
                                         </Flex>
@@ -468,7 +466,7 @@ const CommonCheckTable = (props) => {
                                 </Tr>
                                 : data && data?.length === 0 || data === undefined ? (
                                     <Tr>
-                                        <Td colSpan={columns.length}>
+                                        <Td colSpan={tempSelectedColumns.length}>
                                             <Text textAlign={'center'} width="100%" color={textColor} fontSize="sm" fontWeight="700">
                                                 <DataNotFound />
                                             </Text>
@@ -480,7 +478,7 @@ const CommonCheckTable = (props) => {
                                         <Tr {...row?.getRowProps()}>
                                             {row?.cells?.map((cell, index) => {
                                                 let data = "";
-                                                columnData?.forEach((item) => {
+                                                tempSelectedColumns?.forEach((item) => {
                                                     if (cell?.column.Header === item.Header) {
                                                         if (item.cell && typeof item.cell === 'function') {
                                                             data = (
@@ -546,7 +544,7 @@ const CommonCheckTable = (props) => {
                                 {columnData?.map((column) => (
                                     <Text display={"flex"} key={column?.accessor} py={2}>
                                         <Checkbox
-                                            defaultChecked={columns?.some((item) => item?.accessor === column?.accessor)}
+                                            defaultChecked={tempSelectedColumns?.some((item) => item?.accessor === column?.accessor)}
                                             onChange={() => toggleColumnVisibility(column?.accessor)}
                                             pe={2}
                                         />
@@ -560,7 +558,7 @@ const CommonCheckTable = (props) => {
                                 colorScheme='brand'
                                 mr={2}
                                 onClick={() => {
-                                    setColumns([...tempSelectedColumns]);
+                                    setTempSelectedColumns([...tempSelectedColumns]);
                                     setManageColumnsModel(false);
                                 }}
                                 disabled={isLoding ? true : false}
@@ -585,4 +583,4 @@ const CommonCheckTable = (props) => {
     );
 }
 
-export default CommonCheckTable
+export default CommonCheckTable;
