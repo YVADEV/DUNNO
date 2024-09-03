@@ -38,12 +38,12 @@ function AuthIllustration(props) {
           position='absolute'
           flexDirection={'column'}
           alignItems={'center'}
-          // bg={'black'}
+          // bg='assets/img/auth/png-01.png'
           overflow={'hidden'}
           right='0px'>
-          <Link to="https://prolinkinfotech.com/" target="_blank" style={{ height: '50%', width: '50%' }} >
+          <Link to="https://imobiliaredubai-realestate.com" target="_blank" style={{ height: '50%', width: '50%' }} >
             <Flex
-              bg={`url(${illustrationBackground})`}
+              bg={`assets/img/auth/png-02.png'(${illustrationBackground})`}
               justify='center'
               align='center'
               w='100%'

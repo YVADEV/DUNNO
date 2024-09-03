@@ -56,7 +56,7 @@ export default function Footer() {
           <Link
             fontWeight='500'
             color={textColor}
-            href='https://prolinkinfotech.com/'>
+            href='>
             Support
           </Link>
         </ListItem>

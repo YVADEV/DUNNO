@@ -5,7 +5,7 @@ const direction = 'ltr'
 
 const config = {
   useSystemColorMode: false,
-  initialColorMode: 'light',
+  initialColorMode: 'dark',
   cssVarPrefix: 'chakra',
 }
 

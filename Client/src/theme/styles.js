@@ -92,7 +92,7 @@ export const globalStyles = {
     global: (props) => ({
       body: {
         overflowX: "hidden",
-        bg: mode("secondaryGray.300", "navy.900")(props),
+        bg: mode("black.100", "navy.900")(props),
         fontFamily: "Inter,sans-serif",
         letterSpacing: "-0.5px",
       },

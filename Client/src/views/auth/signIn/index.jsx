@@ -35,7 +35,7 @@ import { setUser } from "../../../redux/slices/localSlice";
 
 function SignIn() {
   // Chakra color mode
-  const textColor = useColorModeValue("navy.700", "white");
+  const textColor = useColorModeValue("navy.700", "blackAlpha.900");
   const textColorSecondary = "gray.400";
   const brandStars = useColorModeValue("brand.500", "brand.400");
   const [isLoding, setIsLoding] = React.useState(false);
