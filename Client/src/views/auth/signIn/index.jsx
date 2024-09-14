@@ -1,7 +1,6 @@
 import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useFormik } from "formik";
-// Chakra imports
 import {
   Box,
   Button,
@@ -16,7 +15,7 @@ import {
   InputGroup,
   InputRightElement,
   Text,
-  useColorModeValue,
+  keyframes,
 } from "@chakra-ui/react";
 
 // Custom components
@@ -33,11 +32,21 @@ import { useDispatch, useSelector } from "react-redux";
 import { fetchImage } from "../../../redux/slices/imageSlice";
 import { setUser } from "../../../redux/slices/localSlice";
 
+// Import the background image
+import bgImage from '../../../assets/img/auth/bg-csn.png';
+
+// Define the animation
+const subtleGoldPulse = keyframes`
+  0% { box-shadow: 0 0 15px 0 rgba(236, 190, 23, 0.4); }
+  50% { box-shadow: 0 0 20px 5px rgba(236, 190, 23, 0.5); }
+  100% { box-shadow: 0 0 15px 0 rgba(236, 190, 23, 0.4); }
+`;
+
 function SignIn() {
   // Chakra color mode
-  const textColor = useColorModeValue("navy.700", "blackAlpha.900");
+  const textColor = "navy.700";
   const textColorSecondary = "gray.400";
-  const brandStars = useColorModeValue("brand.500", "brand.400");
+  const brandStars = "brand.500";
   const [isLoding, setIsLoding] = React.useState(false);
   const [checkBox, setCheckBox] = React.useState(true);
 
@@ -94,48 +103,46 @@ function SignIn() {
   };
 
   return (
-    <DefaultAuth
-      illustrationBackground={image?.length > 0 && image[0]?.authImg}
-      image={image?.length > 0 && image[0]?.authImg}
-    >
+    <Flex minHeight="100vh" width="100%">
+      {/* Left side - Sign-in form */}
       <Flex
-        maxW={{ base: "100%", md: "max-content" }}
-        w="100%"
-        mx={{ base: "auto", lg: "0px" }}
-        me="auto"
-        h="fit-content"
-        alignItems="start"
+        width={["100%", "50%"]}
+        bg="black"
+        alignItems="center"
         justifyContent="center"
-        mb={{ base: "30px", md: "60px" }}
-        px={{ base: "25px", md: "0px" }}
-        mt={{ base: "40px", md: "14vh" }}
+        p={8}
         flexDirection="column"
       >
-        <Box me="auto">
-          <Heading color={textColor} fontSize="36px" mb="10px">
-            Sign In
-          </Heading>
-          <Text
-            mb="36px"
-            ms="4px"
-            color={textColorSecondary}
-            fontWeight="400"
-            fontSize="md"
-          >
-            Enter your email and password to sign in!
-          </Text>
-        </Box>
         <Flex
-          zIndex="2"
-          direction="column"
-          w={{ base: "100%", md: "420px" }}
-          maxW="100%"
-          background="transparent"
+          width="100%"
+          maxWidth="420px"
+          flexDirection="column"
+          bg="rgba(255, 255, 255, 0.1)"
+          backdropFilter="blur(10px)"
           borderRadius="15px"
-          mx={{ base: "auto", lg: "unset" }}
-          me="auto"
-          mb={{ base: "20px", md: "auto" }}
+          p={6}
+          border="1px solid rgba(236, 190, 23, 0.3)"
+          animation={`${subtleGoldPulse} 3s infinite ease-in-out`}
+          transition="all 0.3s ease-in-out"
+          _hover={{
+            transform: "scale(1.02)",
+            boxShadow: "0 0 25px 10px rgba(236, 190, 23, 0.6)",
+          }}
         >
+          <Box mb={6}>
+            <Heading color="white" fontSize={["24px", "36px"]} mb="10px">
+              Sign In
+            </Heading>
+            <Text
+              mb="36px"
+              color="whiteAlpha.800"
+              fontWeight="400"
+              fontSize={["sm", "md"]}
+            >
+              Enter your email and password to sign in!
+            </Text>
+          </Box>
+          
           <form onSubmit={handleSubmit}>
             <FormControl isInvalid={errors.username && touched.username}>
               <FormLabel
@@ -143,10 +150,10 @@ function SignIn() {
                 ms="4px"
                 fontSize="sm"
                 fontWeight="500"
-                color={textColor}
+                color="white"
                 mb="8px"
               >
-                Email<Text color={brandStars}>*</Text>
+                Email<Text color="red.500">*</Text>
               </FormLabel>
               <Input
                 fontSize="sm"
@@ -160,16 +167,17 @@ function SignIn() {
                 mb={errors.username && touched.username ? undefined : "24px"}
                 fontWeight="500"
                 size="lg"
+                color="white"
+                bg="rgba(255, 255, 255, 0.1)"
                 borderColor={
-                  errors.username && touched.username ? "red.300" : null
+                  errors.username && touched.username ? "red.300" : "whiteAlpha.300"
                 }
-                className={
-                  errors.username && touched.username ? "isInvalid" : null
-                }
+                _placeholder={{ color: "whiteAlpha.500" }}
+                _hover={{ borderColor: "whiteAlpha.400" }}
+                _focus={{ borderColor: "white" }}
               />
               {errors.username && touched.username && (
-                <FormErrorMessage mb="24px">
-                  {" "}
+                <FormErrorMessage mb="24px" color="red.500">
                   {errors.username}
                 </FormErrorMessage>
               )}
@@ -183,10 +191,10 @@ function SignIn() {
                 ms="4px"
                 fontSize="sm"
                 fontWeight="500"
-                color={textColor}
+                color="white"
                 display="flex"
               >
-                Password<Text color={brandStars}>*</Text>
+                Password<Text color="red.500">*</Text>
               </FormLabel>
               <InputGroup size="md">
                 <Input
@@ -201,16 +209,18 @@ function SignIn() {
                   size="lg"
                   variant="auth"
                   type={show ? "text" : "password"}
+                  color="white"
+                  bg="rgba(255, 255, 255, 0.1)"
                   borderColor={
-                    errors.password && touched.password ? "red.300" : null
+                    errors.password && touched.password ? "red.300" : "whiteAlpha.300"
                   }
-                  className={
-                    errors.password && touched.password ? "isInvalid" : null
-                  }
+                  _placeholder={{ color: "whiteAlpha.500" }}
+                  _hover={{ borderColor: "whiteAlpha.400" }}
+                  _focus={{ borderColor: "white" }}
                 />
                 <InputRightElement display="flex" alignItems="center" mt="4px">
                   <Icon
-                    color={textColorSecondary}
+                    color="whiteAlpha.700"
                     _hover={{ cursor: "pointer" }}
                     as={show ? RiEyeCloseLine : MdOutlineRemoveRedEye}
                     onClick={showPass}
@@ -218,57 +228,97 @@ function SignIn() {
                 </InputRightElement>
               </InputGroup>
               {errors.password && touched.password && (
-                <FormErrorMessage mb="24px">
-                  {" "}
+                <FormErrorMessage mb="24px" color="red.500">
                   {errors.password}
                 </FormErrorMessage>
               )}
-              <Flex justifyContent="space-between" align="center" mb="24px">
-                <FormControl display="flex" alignItems="center">
-                  <Checkbox
-                    onChange={(e) => setCheckBox(e.target.checked)}
-                    id="remember-login"
-                    value={checkBox}
-                    defaultChecked
-                    colorScheme="brandScheme"
-                    me="10px"
-                  />
-                  <FormLabel
-                    htmlFor="remember-login"
-                    mb="0"
-                    fontWeight="normal"
-                    color={textColor}
-                    fontSize="sm"
-                  >
-                    Keep me logged in
-                  </FormLabel>
-                </FormControl>
-              </Flex>
-
-              <Flex
-              justifyContent="space-between"
-              align="center"
-              mb="24px"
-              ></Flex>
-              <Button
-              fontSize="sm"
-              bg="gold" // Set the button background to gold
-              color="black" // Set the text color to black
-              fontWeight="500"
-   w="100%"
-  h="50"
-  type="submit"
-  mb="24px"
-  disabled={isLoding ? true : false}
-  _hover={{ bg: "yellow.500" }} // Optional: change the hover color
->
-  {isLoding ? <Spinner /> : "Sign In"}
-</Button>
             </FormControl>
+            <Flex justifyContent="space-between" align="center" mb="24px">
+              <FormControl display="flex" alignItems="center">
+                <Checkbox
+                  onChange={(e) => setCheckBox(e.target.checked)}
+                  id="remember-login"
+                  value={checkBox}
+                  defaultChecked
+                  colorScheme="yellow"
+                  borderColor="whiteAlpha.300"
+                  _hover={{ borderColor: "whiteAlpha.400" }}
+                />
+                <FormLabel
+                  htmlFor="remember-login"
+                  mb="0"
+                  fontWeight="semi-bold"
+                  color="white"
+                  fontSize="sm"
+                  ms="2"
+                >
+                  Keep me logged in
+                </FormLabel>
+              </FormControl>
+            </Flex>
+            <Button
+              fontSize="sm"
+              bg="transparent"
+              color="white"
+              fontWeight="500"
+              w="100%"
+              h="50"
+              type="submit"
+              mb="24px"
+              disabled={isLoding ? true : false}
+              _hover={{ bg: "rgba(255, 255, 255, 0.1)" }}
+              borderRadius="15px"
+              border="1px solid gold"
+            >
+              {isLoding ? <Spinner /> : "Sign In"}
+            </Button>
           </form>
         </Flex>
+        
+        <Text
+          color="white"
+          fontSize="xs"
+          textAlign="left"
+          mt={6}
+          maxWidth="420px"
+        >
+          * Note that Expert Casa Nova CRM is made only for Desktop. 
+          Copyright: EXPERT CASA NOVA REALESTATE L.L.C
+        </Text>
       </Flex>
-    </DefaultAuth>
+
+      {/* Right side - Background image with welcome text */}
+      <Flex
+        display={["none", "flex"]}
+        width={["0%", "50%"]}
+        backgroundImage={`url(${bgImage})`}
+        backgroundSize="cover"
+        backgroundPosition="center"
+        backgroundRepeat="no-repeat"
+        alignItems="center"
+        justifyContent="center"
+        position="relative"
+      >
+        <Box
+          position="absolute"
+          top="0"
+          left="0"
+          right="0"
+          bottom="0"
+          bg="rgba(0, 0, 0, 0.4)"
+        />
+        <Text
+          color="white"
+          fontSize={["2xl", "3xl", "4xl"]}
+          fontWeight="bold"
+          textAlign="center"
+          zIndex="1"
+          px={4}
+        >
+          Welcome to Expert Casa Nova CRM
+        </Text>
+      </Flex>
+    </Flex>
   );
 }
 
